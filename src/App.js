@@ -1,23 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import { TableComponent } from "./TableComponent";
+import { useEffect, useState } from "react";
+import fetchData from "./Helpers/FetchData";
 
 function App() {
+  const [state, setState] = useState([]);
+  useEffect(() => {
+    fetchData(setState, "get-all-Visitors");
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <TableComponent data={state} />
     </div>
   );
 }

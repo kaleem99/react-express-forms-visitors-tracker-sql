@@ -1,38 +1,91 @@
-.App {
-  text-align: center;
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+th {
+  background-color: #069861;
   color: white;
 }
-
-.App-link {
-  color: #61dafb;
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+.TableDiv {
+  width: 90%;
+  margin: 10% auto;
+}
+.TableEditInputfalse {
+  background-color: transparent;
+  border: 1px solid transparent;
+  height: 30px;
+}
+.TableEditInputtrue {
+  border: 1px groove gray;
+  height: 30px;
+  background-color: transparent;
+}
+.TableNonEdit {
+  border: 0px;
+  height: 30px;
+  background-color: transparent;
+}
+input {
+  text-align: center;
+  width: 100%;
+}
+th {
+  text-align: center;
+}
+.EditAndDeleteBtn {
+  width: 80px;
+  height: 35px;
+  font-size: 35px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.LowerContentBtns {
+  margin: 3% auto;
+  /* border: 1px solid #000; */
+  text-align: right;
+}
+button{
+  cursor: pointer;
+}
+.DeleteAllBtns {
+  width: 100px;
+  height: 40px;
+  background-color: rgb(213, 0, 0);
+  color: white;
+  border: none;
+  border-radius: 2px;
+  font-size: medium;
+  cursor: default;
+  opacity: 0.4;
+}
+.AddNewRow {
+  float: left;
+  width: 120px;
+  height: 40px;
+  background-color: rgb(0, 136, 255);
+  color: white;
+  border: none;
+  border-radius: 2px;
+  font-size: medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.AddNewRow > svg{
+  font-size: large;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
