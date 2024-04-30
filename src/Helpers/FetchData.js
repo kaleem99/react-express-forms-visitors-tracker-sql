@@ -1,15 +1,18 @@
+import { FetchDataAction } from "../Redux/Actions";
 
-const fetchData = (setState, url) => {
+const fetchData = (dispatch, url) => {
   const urlRoute = process.env.REACT_APP_URL_LINK + url;
-  console.log(urlRoute);
+  // console.log(urlRoute);
   fetch(urlRoute)
     .then((res) => {
       return res.json();
     })
     .then((data) => {
-      console.log(data);
-      setState(data);
-    });
+      // console.log(data);
+      dispatch(FetchDataAction(data));
+      console.log("DATA UPDATED");
+    })
+    .catch((err) => console.log(err));
 };
 
 export default fetchData;
