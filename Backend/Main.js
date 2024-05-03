@@ -21,7 +21,7 @@ const dbPath = "path/to/your/new/database.db";
 //   }
 // });
 
-app.post("/create-database:name", (req, res) => {
+app.post("/create-database/:name", (req, res) => {
   const dbPath = `databases/${req.params.name}`;
 
   if (!fs.existsSync(dbPath)) {
@@ -29,8 +29,11 @@ app.post("/create-database:name", (req, res) => {
 
     db.close((err) => {
       if (err) {
+        console.log("Error cannpt create Database", err);
+
         res.status(500).json({ message: "Error creating database" });
       } else {
+        console.log("Database created successfully");
         res.status(200).json({ message: "Database created successfully" });
       }
     });
