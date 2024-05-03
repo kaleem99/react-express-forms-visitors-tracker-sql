@@ -3,13 +3,16 @@ import "./App.css";
 import TableComponent from "./TableComponent";
 import { useEffect, useState } from "react";
 import fetchData from "./Helpers/FetchData";
-import { useDispatch } from "react-redux";
-
-function App() {
+import { connect, useDispatch } from "react-redux";
+import fetchColumns from "./Helpers/FetchColumns";
+import SignupForm from "./Components/Signup";
+function App({ databaseName }) {
   const [state, setState] = useState([]);
   const dispatch = useDispatch();
   const fetchVisitorsData = () => {
-    fetchData(dispatch, "get-all-Visitors");
+    console.log(databaseName);
+    fetchData(dispatch, `get-all-Visitors${databaseName}`);
+    fetchColumns(dispatch, `get-columns-Visitors${databaseName}`);
   };
   useEffect(() => {
     fetchVisitorsData();
@@ -22,9 +25,17 @@ function App() {
   // }
   return (
     <div className="App">
-      <TableComponent fetchVisitorsData={fetchVisitorsData} />
+      {databaseName == undefined ? (
+        <SignupForm />
+      ) : (
+        <TableComponent fetchVisitorsData={fetchVisitorsData} />
+      )}
     </div>
   );
 }
-
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    databaseName: state.databaseName,
+  };
+};
+export default connect(mapStateToProps, {})(App);

@@ -58,7 +58,7 @@ th {
   /* border: 1px solid #000; */
   text-align: right;
 }
-button{
+button {
   cursor: pointer;
 }
 .DeleteAllBtns {
@@ -74,7 +74,7 @@ button{
 }
 .AddNewRow {
   float: left;
-  width: 120px;
+  width: auto;
   height: 40px;
   background-color: rgb(0, 136, 255);
   color: white;
@@ -85,10 +85,29 @@ button{
   align-items: center;
   justify-content: center;
 }
-.AddNewRow > svg{
+.AddNewRow > svg {
   font-size: large;
 }
 
-.AddNewRowForm{
+.AddNewRowForm {
+  width: 80%;
+  margin: auto;
+}
+
+.AddNewVisitorForm {
+  width: 100%;
+  margin: auto;
+}
+.AddNewVisitorForm > input {
+  height: 28px;
+}
+.AddNewVisitorButton {
+  width: 101%;
+  height: 30px;
+  /* padding: 8px; */
+}
+#GenerateTableInput {
+  height: 25px;
+  border: none;
   
 }

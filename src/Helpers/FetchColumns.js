@@ -10,7 +10,7 @@ const fetchColumns = (dispatch, url) => {
     .then((data) => {
       // console.log(data);
       dispatch(FetchColumnsAction(data));
-      console.log("DATA UPDATED");
+      console.log("DATA UPDATED", data);
     })
     .catch((err) => console.log(err));
 };

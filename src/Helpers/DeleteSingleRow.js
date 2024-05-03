@@ -1,5 +1,6 @@
-const deleteARow = (num) => {
-  const urlRoute = process.env.REACT_APP_URL_LINK + "delete-Visitors" + num;
+const deleteARow = (num, name) => {
+  const urlRoute =
+    process.env.REACT_APP_URL_LINK + "delete-Visitors" + num + "/" + name;
   // console.log(urlRoute);
   fetch(urlRoute, {
     method: "DELETE",

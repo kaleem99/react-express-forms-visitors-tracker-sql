@@ -4,6 +4,8 @@ import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { FcCancel } from "react-icons/fc";
 import { MdAddBox } from "react-icons/md";
+import { CiViewList } from "react-icons/ci";
+
 import deleteARow from "./Helpers/DeleteSingleRow";
 import GenerateTable from "./Components/GenerateTable";
 import { connect } from "react-redux";
@@ -17,6 +19,7 @@ const mapStateToProps = (state) => {
 };
 // const MyComponentContainer = connect(mapStateToProps, {})(GenerateTable);
 const MyComponentWithLoading = withLoadingScreen(GenerateTable);
+const AddNewRowWithLoading = withLoadingScreen(AddNewRow);
 
 function TableComponent({ data, fetchVisitorsData }) {
   const [addNewData, setAddNewData] = useState(false);
@@ -57,7 +60,7 @@ function TableComponent({ data, fetchVisitorsData }) {
   return (
     <div className="TableDiv">
       {addNewData ? (
-        <AddNewRow data={data} />
+        <AddNewRow fetchVisitorsData={fetchVisitorsData} />
       ) : (
         <MyComponentWithLoading
           fetchVisitorsData={fetchVisitorsData}
@@ -65,8 +68,24 @@ function TableComponent({ data, fetchVisitorsData }) {
         />
       )}
       <div className="LowerContentBtns">
-        <button onClick={() => setAddNewData(true)} className="AddNewRow">
-          Add Row &nbsp; <MdAddBox />
+        <button
+          onClick={async () => {
+            setAddNewData(!addNewData);
+            fetchVisitorsData();
+          }}
+          className="AddNewRow"
+        >
+          {!addNewData ? (
+            <>
+              Add Row &nbsp;
+              <MdAddBox />
+            </>
+          ) : (
+            <>
+              View Visitors &nbsp;
+              <CiViewList />
+            </>
+          )}
         </button>
         <button disabled={checked.length === 0} className="DeleteAllBtns">
           Delete

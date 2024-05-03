@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { MdSave } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -7,17 +7,21 @@ import { FcCancel } from "react-icons/fc";
 import { MdAddBox } from "react-icons/md";
 import deleteARow from "../Helpers/DeleteSingleRow";
 import updateARow from "../Helpers/UpdateARow";
+import checkDataType from "../Helpers/CheckDataType";
+import setTimeOutFunction from "../Helpers/SetTimeOut";
 
-const GenerateTable = ({ data, fetchVisitorsData }) => {
+const GenerateTable = ({ data, fetchVisitorsData, databaseName }) => {
   const [columNames, setColumNames] = useState([]);
   // console.log(data)
+  const [tableState, setTableState] = useState([]);
+  const dispatch = useDispatch();
   useEffect(() => {
     const updatedData = [...data].map((obj, i) => {
       obj.delete = (
         <button
           onClick={async () => {
-            await deleteARow(obj.id);
-            await fetchVisitorsData();
+            await deleteARow(obj.id, databaseName);
+            setTimeOutFunction(fetchVisitorsData);
           }}
         >
           <MdDelete />
@@ -30,7 +34,11 @@ const GenerateTable = ({ data, fetchVisitorsData }) => {
             let x = document.querySelectorAll(
               ".editInput" + e.currentTarget.id
             );
-            x.forEach((elem) => (elem.disabled = false));
+            x.forEach((elem, i) => {
+              if (i > 0) {
+                elem.disabled = !elem.disabled;
+              }
+            });
             console.log(x);
           }}
         >
@@ -49,17 +57,10 @@ const GenerateTable = ({ data, fetchVisitorsData }) => {
             );
             const resultArr = [];
 
-            x.forEach((elem) => resultArr.push(elem.value));
+            x.forEach((elem) => resultArr.push({ [elem.name]: elem.value }));
             x.forEach((elem) => (elem.disabled = true));
-            await updateARow(
-              obj.id,
-              resultArr[1],
-              resultArr[2],
-              resultArr[3],
-              resultArr[4],
-              resultArr[5]
-            );
-            await fetchVisitorsData();
+            await updateARow(obj.id, databaseName, resultArr);
+            setTimeOutFunction(fetchVisitorsData);
             // }
           }}
         >
@@ -73,6 +74,8 @@ const GenerateTable = ({ data, fetchVisitorsData }) => {
     const tableColumns = Object.keys(updatedData[0]);
     // console.log(tableColumns);
     setColumNames(tableColumns);
+    console.log(data);
+    setTableState(data);
   }, [data]);
   return (
     <table>
@@ -81,9 +84,10 @@ const GenerateTable = ({ data, fetchVisitorsData }) => {
           <th key={"A" + i}>{key}</th>
         ))}
       </tr>
-      {data.map((obj, index) => {
+      {tableState.map((obj, index) => {
         const arr = Object.values(obj);
         // console.log(arr);
+        const keys = Object.keys(obj);
         return (
           <tr key={"B" + index}>
             {/* <td>{obj.name}</td> */}
@@ -94,9 +98,28 @@ const GenerateTable = ({ data, fetchVisitorsData }) => {
                 ) : (
                   <input
                     key={"D" + i}
+                    id="GenerateTableInput"
                     className={`editInput${index}`}
                     disabled
-                    defaultValue={val}
+                    name={keys[i]}
+                    // defaultValue={val}
+                    value={val}
+                    type={checkDataType(keys[i])}
+                    onChange={(e) =>
+                      setTableState((prevState) => {
+                        const newState = prevState.map((state, idx) => {
+                          if (idx === index) {
+                            return {
+                              ...state,
+                              [keys[i]]: e.target.value,
+                            };
+                          }
+                          return state;
+                        });
+                        dispatch({ type: "UPDATE_DATA", data: newState });
+                        return newState;
+                      })
+                    }
                   />
                 )}
               </td>
@@ -108,8 +131,10 @@ const GenerateTable = ({ data, fetchVisitorsData }) => {
   );
 };
 const mapStateToProps = (state) => {
+  console.log(state.data, "!!@@@!!");
   return {
     data: state.data,
+    databaseName: state.databaseName,
   };
 };
 export default connect(mapStateToProps, {})(GenerateTable);
