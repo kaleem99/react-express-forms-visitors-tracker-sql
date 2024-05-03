@@ -24,29 +24,92 @@ const dbPath = "path/to/your/new/database.db";
 //     console.log("Connected to the SQLite database.");
 //   }
 // });
+const dbData = new sqlite3.Database("Users");
 
-app.post("/create-database/:name", (req, res) => {
-  fs.mkdir("./databases", () => {
-    console.log("folder created");
-  });
-  const dbPath = `./databases/${req.params.name}`;
-
-  if (!fs.existsSync(dbPath)) {
-    const db = new sqlite3.Database(dbPath);
-
-    db.close((err) => {
-      if (err) {
-        console.error("Error creating database", err);
-        res.status(500).json({ message: "Error creating database" });
-      } else {
-        console.log("Database created successfully");
-        res.status(200).json({ message: "Database created successfully" });
-      }
-    });
-  } else {
-    res.status(400).json({ message: "Database file already exists" });
-  }
+dbData.serialize(() => {
+  dbData.run(
+    "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, password TEXT)"
+  );
 });
+const createDirectoryIfNotExists = (directoryPath) => {
+  // Check if the directory exists
+  if (!fs.existsSync(directoryPath)) {
+    // Directory doesn't exist, create it
+    fs.mkdirSync(directoryPath);
+    console.log(`Directory '${directoryPath}' created successfully.`);
+  } else {
+    console.log(`Directory '${directoryPath}' already exists.`);
+  }
+};
+createDirectoryIfNotExists("./databases");
+app.post("/signup", (req, res) => {
+  const { name, email, password } = req.body;
+
+  // First, check if the user already exists in the database
+  dbData.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
+    if (err) {
+      console.error("Error checking user existence:", err);
+      res.status(500).json({ message: "Error checking user existence" });
+      return; // Stop further execution
+    }
+
+    if (row) {
+      // User already exists, return a 400 response
+      res.status(400).json({ message: "User already exists" });
+    } else {
+      // User doesn't exist, proceed to create the user and database
+      dbData.run(
+        "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+        [name, email, password],
+        (err) => {
+          if (err) {
+            console.error("Error creating user:", err);
+            res.status(500).json({ message: "Error creating user" });
+            return; // Stop further execution
+          }
+
+          // Create the database
+          const dbPath = `./databases/${email}`;
+          if (!fs.existsSync(dbPath)) {
+            const db = new sqlite3.Database(dbPath);
+
+            db.close((err) => {
+              if (err) {
+                console.error("Error creating database", err);
+                res.status(500).json({ message: "Error creating database" });
+              } else {
+                console.log("Database created successfully");
+                res.status(201).json({ message: "User created successfully" });
+              }
+            });
+          } else {
+            res.status(400).json({ message: "Database file already exists" });
+          }
+        }
+      );
+    }
+  });
+});
+
+// app.post("/create-database/:name", (req, res) => {
+//   const dbPath = `./databases/${req.params.name}`;
+
+//   if (!fs.existsSync(dbPath)) {
+//     const db = new sqlite3.Database(dbPath);
+
+//     db.close((err) => {
+//       if (err) {
+//         console.error("Error creating database", err);
+//         res.status(500).json({ message: "Error creating database" });
+//       } else {
+//         console.log("Database created successfully");
+//         res.status(200).json({ message: "Database created successfully" });
+//       }
+//     });
+//   } else {
+//     res.status(400).json({ message: "Database file already exists" });
+//   }
+// });
 // Route to add a new visitor
 app.post(`/add-${TableName}:name`, (req, res) => {
   // const { name, assistedBy, age, date, time } = req.body;

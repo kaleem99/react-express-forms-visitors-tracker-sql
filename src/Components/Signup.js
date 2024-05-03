@@ -1,9 +1,12 @@
 import React, { useState } from "react";
+import handleSubmit from "../Helpers/Signup";
+import { useDispatch } from "react-redux";
 
 const SignupForm = () => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: "",
-    username: "",
+    // username: "",
     email: "",
     password: "",
   });
@@ -13,18 +16,18 @@ const SignupForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Send form data to the server or perform validation here
-    console.log(formData);
-    // Reset form after submission
-    setFormData({ name: "", username: "", email: "", password: "" });
-  };
+  //   const handleSubmit = (e) => {
+  //     e.preventDefault();
+  //     // Send form data to the server or perform validation here
+  //     console.log(formData);
+  //     // Reset form after submission
+  //     setFormData({ name: "", username: "", email: "", password: "" });
+  //   };
 
   return (
-    <div>
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="form-container">
+      <h1>Sign up </h1>
+      <form onSubmit={(e) => handleSubmit(e, formData, dispatch)}>
         <div>
           <label htmlFor="name">Name:</label>
           <input
@@ -36,7 +39,7 @@ const SignupForm = () => {
             required
           />
         </div>
-        <div>
+        {/* <div>
           <label htmlFor="username">Username:</label>
           <input
             type="text"
@@ -46,7 +49,7 @@ const SignupForm = () => {
             onChange={handleChange}
             required
           />
-        </div>
+        </div> */}
         <div>
           <label htmlFor="email">Email:</label>
           <input

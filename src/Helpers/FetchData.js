@@ -10,7 +10,7 @@ const fetchData = (dispatch, url) => {
     .then((data) => {
       // console.log(data);
       dispatch(FetchDataAction(data));
-      console.log("DATA UPDATED");
+      console.log("DATA UPDATED", data);
     })
     .catch((err) => console.log(err));
 };
