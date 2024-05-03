@@ -8,9 +8,11 @@ const app = express();
 const port = 8080;
 app.use(express.json()); // For Express 4.16 and above
 // app.use(cors()); // Enable CORS for all routes
-app.use(cors({
-  origin: 'http://localhost:3001'
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3001",
+  })
+);
 // Connect to SQLite database
 const TableName = "Visitors";
 const dbPath = "path/to/your/new/database.db";
@@ -24,15 +26,17 @@ const dbPath = "path/to/your/new/database.db";
 // });
 
 app.post("/create-database/:name", (req, res) => {
-  const dbPath = `databases/${req.params.name}`;
+  fs.mkdir("./databases", () => {
+    console.log("folder created");
+  });
+  const dbPath = `./databases/${req.params.name}`;
 
   if (!fs.existsSync(dbPath)) {
     const db = new sqlite3.Database(dbPath);
 
     db.close((err) => {
       if (err) {
-        console.log("Error cannpt create Database", err);
-
+        console.error("Error creating database", err);
         res.status(500).json({ message: "Error creating database" });
       } else {
         console.log("Database created successfully");
