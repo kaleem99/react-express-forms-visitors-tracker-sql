@@ -7,8 +7,10 @@ const fs = require("fs");
 const app = express();
 const port = 8080;
 app.use(express.json()); // For Express 4.16 and above
-app.use(cors()); // Enable CORS for all routes
-
+// app.use(cors()); // Enable CORS for all routes
+app.use(cors({
+  origin: 'http://localhost:3001'
+}));
 // Connect to SQLite database
 const TableName = "Visitors";
 const dbPath = "path/to/your/new/database.db";
