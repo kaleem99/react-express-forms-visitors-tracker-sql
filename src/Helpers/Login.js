@@ -1,10 +1,10 @@
-const handleSubmit = async (e, formData, dispatch) => {
+const handleSubmit2 = async (e, formData, dispatch) => {
   e.preventDefault();
   formData.email = formData.email.toLowerCase();
   console.log(formData, 3, 3);
 
   try {
-    const response = await fetch(`${process.env.REACT_APP_URL_LINK}signup`, {
+    const response = await fetch(`${process.env.REACT_APP_URL_LINK}login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,11 +19,17 @@ const handleSubmit = async (e, formData, dispatch) => {
 
     const data = await response.json();
     console.log(data);
-    console.log(response, "S");
-    dispatch({ type: "USER_EXISTS", payload: data.message });
+    console.log(response, "SSSS");
+    dispatch({
+      type: "USER_LOGIN",
+      payload: data.message,
+      token: data.token,
+      database: data.email,
+    });
+    dispatch({ type: "CHANGE_SECTION", payload: "DASHBOARD" });
   } catch (error) {
     console.error("Error:", error);
   }
 };
 
-export default handleSubmit;
+export default handleSubmit2;

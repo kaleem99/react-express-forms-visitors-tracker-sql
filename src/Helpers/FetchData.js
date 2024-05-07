@@ -2,9 +2,10 @@ import { FetchDataAction } from "../Redux/Actions";
 
 const fetchData = (dispatch, url) => {
   const urlRoute = process.env.REACT_APP_URL_LINK + url;
-  // console.log(urlRoute);
+  console.log(urlRoute);
   fetch(urlRoute)
     .then((res) => {
+      console.log(res)
       return res.json();
     })
     .then((data) => {

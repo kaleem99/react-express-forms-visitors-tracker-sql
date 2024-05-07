@@ -3,14 +3,28 @@ const sqlite3 = require("sqlite3").verbose();
 const bodyParser = require("body-parser"); // For Express versions below 4.16
 const cors = require("cors");
 const fs = require("fs");
+const session = require("express-session");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 const app = express();
 const port = 8080;
+const secretKey = crypto.randomBytes(32).toString("hex");
+console.log(secretKey, "SS");
 app.use(express.json()); // For Express 4.16 and above
 // app.use(cors()); // Enable CORS for all routes
 app.use(
   cors({
     origin: "http://localhost:3001",
+  })
+);
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  session({
+    secret: secretKey,
+    resave: false,
+    saveUninitialized: false,
   })
 );
 // Connect to SQLite database
@@ -44,7 +58,7 @@ const createDirectoryIfNotExists = (directoryPath) => {
 createDirectoryIfNotExists("./databases");
 app.post("/signup", (req, res) => {
   const { name, email, password } = req.body;
-
+  console.log(name, email, password);
   // First, check if the user already exists in the database
   dbData.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
     if (err) {
@@ -54,13 +68,15 @@ app.post("/signup", (req, res) => {
     }
 
     if (row) {
-      // User already exists, return a 400 response
-      res.status(400).json({ message: "User already exists" });
+      console.log("User already exists, return a 400 response");
+      res.json({ message: "User already exists, Please" });
     } else {
       // User doesn't exist, proceed to create the user and database
+      const hashedPassword = bcrypt.hashSync(password, 10);
+
       dbData.run(
         "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-        [name, email, password],
+        [name, email, hashedPassword],
         (err) => {
           if (err) {
             console.error("Error creating user:", err);
@@ -111,6 +127,50 @@ app.post("/signup", (req, res) => {
 //   }
 // });
 // Route to add a new visitor
+app.get("/dashboard", (req, res) => {
+  console.log(req.session.user, 100);
+
+  if (!req.session.user) {
+    return res.status(401).json({ message: "Unauthorized", type: false });
+  }
+  res.json({ message: "Welcome to the dashboard", type: true });
+});
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  console.log(email, password);
+  // First, check if the user already exists in the database
+  dbData.get("SELECT * FROM users WHERE email = ?", [email], (err, row) => {
+    if (err) {
+      console.error("Error checking user existence:", err);
+      res.status(500).json({ message: "Error checking user existence" });
+      return; // Stop further execution
+    }
+
+    if (row) {
+      // console.log(bcrypt.compareSync(password, row.password));
+      if (bcrypt.compareSync(password, row.password)) {
+        // console.log("User already exists, return a 400 response");
+        console.log(row);
+        req.session.user = email;
+        console.log(req.session.user);
+        // const token = jwt.sign({ userId: row.id }, "your_secret_key", {
+        //   expiresIn: "1h",
+        // });
+
+        res.json({
+          message: "Logging you in",
+          token: secretKey,
+          email: email,
+        });
+      } else {
+        res.json({ message: "Incorrect password please try again" });
+      }
+    } else {
+      // User doesn't exist, proceed to create the user and database
+      res.json({ message: "Account doesn't exist please signup" });
+    }
+  });
+});
 app.post(`/add-${TableName}:name`, (req, res) => {
   // const { name, assistedBy, age, date, time } = req.body;
   const dbName = req.params.name;
@@ -155,11 +215,11 @@ app.post(`/add-${TableName}:name`, (req, res) => {
 });
 
 // Route to fetch all visitors
-app.get(`/get-all-${TableName}:name`, async (req, res) => {
+app.get(`/get-all-Visitors:name`, async (req, res) => {
   const dbName = req.params.name;
-  // console.log(dbName);
+  console.log(dbName, 220);
   const dbPath = `databases/${dbName}.db`;
-  // console.log(dbPath)
+  console.log(dbPath, 222, "PATH");
   const db = new sqlite3.Database(dbPath);
   db.all(`SELECT * FROM ${TableName};`, (err, rows) => {
     if (err) {
@@ -167,6 +227,7 @@ app.get(`/get-all-${TableName}:name`, async (req, res) => {
       return res.status(500).send("Error fetching visitors.");
     } else {
       // console.log(rows);
+      console.log(rows, "ROWS");
       res.json(rows);
     }
   });
@@ -293,13 +354,26 @@ app.put(`/update-${TableName}:num/:name`, (req, res) => {
   );
 });
 
-// db.all("SELECT name FROM sqlite_master WHERE type='table'", (err, rows) => {
-//   if (err) {
-//     console.error(err.message);
-//   } else {
-//     console.log(rows);
-//   }
-// });
+app.post("/get-all-tables", (req, res) => {
+  const { email } = req.body;
+  const dbName = `${email}.db`;
+  const dbPath = `databases/${dbName}`;
+  const db = new sqlite3.Database(dbPath);
+  console.log(db, email);
+  db.all("SELECT name FROM sqlite_master WHERE type='table'", (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ error: "Internal server error" });
+      return;
+    }
+
+    // Extract table names from the result rows
+    const tableNames = rows.map((row) => row.name);
+    console.log(tableNames);
+    res.json({ tables: tableNames });
+  });
+});
+
 // app.post(`/create-database:name`, (req, res) => {
 //   const databaseName = req.params.name;
 //   db.run(`CREATE DATABASE ${databaseName};`, (err, rows) => {

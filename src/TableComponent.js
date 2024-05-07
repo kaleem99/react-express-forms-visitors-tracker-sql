@@ -13,15 +13,17 @@ import withLoadingScreen from "./Components/HigherOrderComponent";
 import AddNewRow from "./Components/AddNewRow";
 const mapStateToProps = (state) => {
   // console.log(state, 100);
+  // console.log(state)
   return {
     data: state.data,
+    tables: state.tables,
   };
 };
 // const MyComponentContainer = connect(mapStateToProps, {})(GenerateTable);
 const MyComponentWithLoading = withLoadingScreen(GenerateTable);
 const AddNewRowWithLoading = withLoadingScreen(AddNewRow);
 
-function TableComponent({ data, fetchVisitorsData }) {
+function TableComponent({ data, fetchVisitorsData, tables }) {
   const [addNewData, setAddNewData] = useState(false);
   const [inputValues, setInputValues] = useState(data);
   const [checked, setChecked] = useState([]);
@@ -59,7 +61,7 @@ function TableComponent({ data, fetchVisitorsData }) {
   };
   return (
     <div className="TableDiv">
-      {addNewData ? (
+      {/* {addNewData ? (
         <AddNewRow fetchVisitorsData={fetchVisitorsData} />
       ) : (
         <MyComponentWithLoading
@@ -90,7 +92,8 @@ function TableComponent({ data, fetchVisitorsData }) {
         <button disabled={checked.length === 0} className="DeleteAllBtns">
           Delete
         </button>
-      </div>
+      </div> */}
+      {tables.length === 0 && <h1>No Tables add</h1>}
     </div>
   );
 }

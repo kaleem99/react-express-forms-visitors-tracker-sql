@@ -6,11 +6,10 @@ const withLoadingScreen = (WrappedComponent) => {
     useEffect(() => {
       // Check if data from props is not null
       // console.log(columns)
-      console.log(100, data)
-
+      console.log(data);
       if (data || columns) {
         setIsLoading(false);
-        console.log(data)
+        console.log(data);
       }
     }, [data, columns]);
     return isLoading ? <div>Loading...</div> : <WrappedComponent {...props} />;

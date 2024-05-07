@@ -1,6 +1,6 @@
-const defaultState = { LOGIN: false };
+const defaultState = { LOGIN: false, SECTION: "SIGNUP" };
 const Reducer = (state = defaultState, action) => {
-  const databaseName = localStorage.getItem("DatabaseName");
+  const databaseName = localStorage.getItem("Database");
   // console.log(databaseName);
   state.databaseName = databaseName;
   switch (action.type) {
@@ -25,6 +25,23 @@ const Reducer = (state = defaultState, action) => {
         action.setState(true);
       }
       return { ...state };
+    case "USER_EXISTS":
+      // console.log("1000".repeat(10));
+      state.ErrorMessage = action.payload;
+      return { ...state };
+    case "CHANGE_SECTION":
+      state.SECTION = action.payload;
+      return { ...state };
+    case "USER_LOGIN":
+      console.log(action.payload, action.token, 36);
+      localStorage.setItem("Token", action.token);
+      localStorage.setItem("Database", action.database);
+      console.log(localStorage.getItem("Token"), 19);
+
+      return { ...state };
+    case "FETCH_ALL_TABLES":
+      console.log(action.payload.tables, 43);
+      return { ...state, tables: action.payload.tables };
     default:
       return state;
   }

@@ -6,17 +6,42 @@ import fetchData from "./Helpers/FetchData";
 import { connect, useDispatch } from "react-redux";
 import fetchColumns from "./Helpers/FetchColumns";
 import SignupForm from "./Components/Signup";
-function App({ databaseName }) {
+import LoginForm from "./Components/LoginForm";
+import fetchAllTables from "./Helpers/FetchAllTables";
+function App({ databaseName, section }) {
   const [state, setState] = useState(false);
   const dispatch = useDispatch();
-
+  console.log(databaseName);
   const fetchVisitorsData = () => {
-    fetchData(dispatch, `get-all-Visitors${databaseName}`);
+    fetchData(dispatch, `get-all-tables/${encodeURIComponent(databaseName)}`);
     fetchColumns(dispatch, `get-columns-Visitors${databaseName}`);
   };
-  console.log(state);
   useEffect(() => {
-    dispatch({ type: "CHECKLOGIN", setState: setState });
+    fetchAllTables(dispatch, databaseName);
+    const token = localStorage.getItem("Token");
+    if (token) {
+      dispatch({ type: "CHANGE_SECTION", payload: "DASHBOARD" });
+    }
+    // dispatch({ type: "CHECKLOGIN", setState: setState });
+    // fetch(process.env.REACT_APP_URL_LINK + "dashboard", {
+    //   method: "GET",
+    // })
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       console.log("ERR");
+    //       throw new Error("Network response was not ok");
+    //     }
+    //   })
+    //   .then((data) => {
+    //     console.log(data, 28);
+    //     if (data) {
+    //       console.log(100);
+    //       dispatch({ type: "CHANGE_SECTION", payload: "DASHBOARD" });
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
     // fetchVisitorsData();
     // fetch(process.env.REACT_APP_URL_LINK + "create-database/NewDB", {
     //   method: "POST",
@@ -50,10 +75,29 @@ function App({ databaseName }) {
 
   //   }
   // }
+  const checkSection = () => {
+    switch (section) {
+      case "SIGNUP":
+        return <SignupForm />;
+      case "LOGIN":
+        return <LoginForm />;
+      case "DASHBOARD":
+        return (
+          <div style={{ width: "100%", height: "100vh", display: "flex" }}>
+            <div
+              style={{ width: "25%", height: "100vh", background: "blue" }}
+            ></div>
+            <TableComponent fetchVisitorsData={fetchVisitorsData} />
+          </div>
+        );
+      default:
+        <SignupForm />;
+    }
+  };
   return (
     <div className="App">
       {/* {databaseName == undefined ? ( */}
-      <SignupForm />
+      {checkSection()}
       {/* // ) : (
       //   <TableComponent fetchVisitorsData={fetchVisitorsData} />
       // )} */}
@@ -61,8 +105,10 @@ function App({ databaseName }) {
   );
 }
 const mapStateToProps = (state) => {
+  // console.log(state);
   return {
     databaseName: state.databaseName,
+    section: state.SECTION,
   };
 };
 export default connect(mapStateToProps, {})(App);

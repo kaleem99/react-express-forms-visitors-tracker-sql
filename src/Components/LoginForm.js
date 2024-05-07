@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import handleSubmit from "../Helpers/Signup";
+import handleSubmit2 from "../Helpers/Login";
 import { connect, useDispatch } from "react-redux";
 
-const SignupForm = ({ Message }) => {
+const LoginForm = ({ Message }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    name: "",
     // username: "",
     email: "",
     password: "",
@@ -26,10 +25,10 @@ const SignupForm = ({ Message }) => {
 
   return (
     <div className="form-container">
-      <h1>Sign up </h1>
-      <form onSubmit={(e) => handleSubmit(e, formData, dispatch)}>
+      <h1>Login</h1>
+      <form onSubmit={(e) => handleSubmit2(e, formData, dispatch)}>
         <div>
-          <label htmlFor="name">Name:</label>
+          {/* <label htmlFor="name">Name:</label>
           <input
             type="text"
             id="name"
@@ -37,7 +36,7 @@ const SignupForm = ({ Message }) => {
             value={formData.name}
             onChange={handleChange}
             required
-          />
+          /> */}
         </div>
         {/* <div>
           <label htmlFor="username">Username:</label>
@@ -72,24 +71,28 @@ const SignupForm = ({ Message }) => {
             required
           />
         </div>
-        <button type="submit">Sign Up</button>
+        <button type="submit">Login</button>
       </form>
       <p>
-        {Message}{" "}
-        <a
-          onClick={() => dispatch({ type: "CHANGE_SECTION", payload: "LOGIN" })}
-          href="#"
-        >
-          Login
-        </a>
+        <p>
+          {Message}{" "}
+          <a
+            onClick={() =>
+              dispatch({ type: "CHANGE_SECTION", payload: "SIGNUP" })
+            }
+            href="#"
+          >
+            Signup
+          </a>
+        </p>
       </p>
     </div>
   );
 };
 const mapStateToProps = (state) => {
-  // console.log(state);
+  console.log(state);
   return {
     Message: state.ErrorMessage,
   };
 };
-export default connect(mapStateToProps, {})(SignupForm);
+export default connect(mapStateToProps, {})(LoginForm);
