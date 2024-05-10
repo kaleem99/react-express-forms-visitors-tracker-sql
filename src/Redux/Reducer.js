@@ -1,4 +1,10 @@
-const defaultState = { LOGIN: false, SECTION: "SIGNUP" };
+const defaultState = {
+  LOGIN: false,
+  SECTION: "SIGNUP",
+  section: "Create Table",
+  columns: [],
+  data: [],
+};
 const Reducer = (state = defaultState, action) => {
   const databaseName = localStorage.getItem("Database");
   // console.log(databaseName);
@@ -9,7 +15,9 @@ const Reducer = (state = defaultState, action) => {
       return { ...state };
     case "FETCH_COLUMNS":
       state.columns = action.data;
-      // console.log(state);
+      state.selectedTable = action.tableName;
+      console.log(action.tableName, "RED");
+
       return { ...state };
     case "UPDATE_DATA":
       state.data = action.data;
@@ -42,6 +50,9 @@ const Reducer = (state = defaultState, action) => {
     case "FETCH_ALL_TABLES":
       console.log(action.payload.tables, 43);
       return { ...state, tables: action.payload.tables };
+    case "CHANGE_DASHBOARD":
+      state.section = action.payload;
+      return { ...state };
     default:
       return state;
   }

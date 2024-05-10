@@ -150,3 +150,39 @@ button {
 .form-container button:hover {
   background-color: #0056b3;
 }
+.InnerTableComponent {
+  width: 90%;
+  margin: auto;
+  height: 70vh;
+}
+.YourTables {
+  width: 100%;
+  margin: 20px auto; /* Center the div horizontally */
+  padding: 10px;
+  background-color: #ffffff; /* Background color of the div */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Box shadow with a slight blur */
+  border-radius: 5px;
+  color: black;
+  font-weight: bold;
+  font-size: large;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.YourTables:hover {
+  /* background-color: #069861; */
+  background-color: transparent;
+}
+.IndexIcon:hover {
+  color: #069861;
+}
+.indexTableRow {
+  width: 120px;
+  font-size: 35px;
+  align-items: center;
+  justify-content: space-between;
+  display: flex;
+}
+.IndexIcon:nth-child(3):hover {
+  color: red;
+}

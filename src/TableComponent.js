@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { MdSave } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -8,25 +8,29 @@ import { CiViewList } from "react-icons/ci";
 
 import deleteARow from "./Helpers/DeleteSingleRow";
 import GenerateTable from "./Components/GenerateTable";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import withLoadingScreen from "./Components/HigherOrderComponent";
 import AddNewRow from "./Components/AddNewRow";
+import fetchColumns from "./Helpers/FetchColumns";
+import ViewTableComponents from "./Components/ViewTablesComponents";
 const mapStateToProps = (state) => {
   // console.log(state, 100);
   // console.log(state)
   return {
     data: state.data,
     tables: state.tables,
+    email: state.databaseName,
   };
 };
 // const MyComponentContainer = connect(mapStateToProps, {})(GenerateTable);
 const MyComponentWithLoading = withLoadingScreen(GenerateTable);
 const AddNewRowWithLoading = withLoadingScreen(AddNewRow);
 
-function TableComponent({ data, fetchVisitorsData, tables }) {
+function TableComponent({ data, fetchVisitorsData, tables, email }) {
   const [addNewData, setAddNewData] = useState(false);
   const [inputValues, setInputValues] = useState(data);
   const [checked, setChecked] = useState([]);
+  const dispatch = useDispatch();
   const handleInputChange = useCallback(
     (value, key, index) => {
       console.log("handleInputChange");
@@ -57,6 +61,34 @@ function TableComponent({ data, fetchVisitorsData, tables }) {
         return "time";
       default:
         return "text";
+    }
+  };
+  useEffect(() => {
+    // Fetch all tables when component mounts
+    fetchTables();
+    // fetchColumns(dispatch, "checkTableColumns", email, );
+  }, []); // Empty dependency array ensures the effect runs only once on mount
+
+  const fetchTables = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/get-all-tables", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }), // Send email in request body
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch tables");
+      }
+
+      const data = await response.json();
+      // setTables(data.tables); // Update state with fetched table names
+      console.log(data.tables);
+    } catch (error) {
+      console.error(error);
+      // Handle error (e.g., show error message to user)
     }
   };
   return (
@@ -93,7 +125,14 @@ function TableComponent({ data, fetchVisitorsData, tables }) {
           Delete
         </button>
       </div> */}
-      {tables.length === 0 && <h1>No Tables add</h1>}
+      <div className="InnerTableComponent">
+        {" "}
+        {tables && tables.length === 0 ? (
+          <h1>No Tables add</h1>
+        ) : (
+          <ViewTableComponents />
+        )}
+      </div>
     </div>
   );
 }

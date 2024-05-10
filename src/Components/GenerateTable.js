@@ -21,7 +21,7 @@ const GenerateTable = ({ data, fetchVisitorsData, databaseName }) => {
         <button
           onClick={async () => {
             await deleteARow(obj.id, databaseName);
-            setTimeOutFunction(fetchVisitorsData);
+            // setTimeOutFunction(fetchVisitorsData);
           }}
         >
           <MdDelete />
@@ -60,7 +60,7 @@ const GenerateTable = ({ data, fetchVisitorsData, databaseName }) => {
             x.forEach((elem) => resultArr.push({ [elem.name]: elem.value }));
             x.forEach((elem) => (elem.disabled = true));
             await updateARow(obj.id, databaseName, resultArr);
-            setTimeOutFunction(fetchVisitorsData);
+            // setTimeOutFunction(fetchVisitorsData);
             // }
           }}
         >

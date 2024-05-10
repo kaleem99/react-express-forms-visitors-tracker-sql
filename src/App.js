@@ -8,13 +8,16 @@ import fetchColumns from "./Helpers/FetchColumns";
 import SignupForm from "./Components/Signup";
 import LoginForm from "./Components/LoginForm";
 import fetchAllTables from "./Helpers/FetchAllTables";
+import Sections from "./Components/Sections";
+import Sidebar from "./Components/NavBar";
 function App({ databaseName, section }) {
   const [state, setState] = useState(false);
+  const [nav, setNav] = useState(true);
   const dispatch = useDispatch();
   console.log(databaseName);
   const fetchVisitorsData = () => {
     fetchData(dispatch, `get-all-tables/${encodeURIComponent(databaseName)}`);
-    fetchColumns(dispatch, `get-columns-Visitors${databaseName}`);
+    fetchColumns(dispatch, `checkTableColumns`, databaseName, "TableName");
   };
   useEffect(() => {
     fetchAllTables(dispatch, databaseName);
@@ -84,10 +87,8 @@ function App({ databaseName, section }) {
       case "DASHBOARD":
         return (
           <div style={{ width: "100%", height: "100vh", display: "flex" }}>
-            <div
-              style={{ width: "25%", height: "100vh", background: "blue" }}
-            ></div>
-            <TableComponent fetchVisitorsData={fetchVisitorsData} />
+            <Sidebar />
+            <Sections />
           </div>
         );
       default:

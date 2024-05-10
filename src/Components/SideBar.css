@@ -1,0 +1,40 @@
+.sidebar {
+  width: 200px;
+  height: 100%;
+  background-color: #333;
+  color: white;
+}
+
+.sidebar-header {
+  padding: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  background-color: #555;
+}
+
+.sidebar-menu {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar-menu li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.sidebar-menu li:hover {
+  background-color: #555;
+}
+
+.sidebar-menu li.active {
+  background-color: #04a96d;
+  color: white;
+}
+.NavBar {
+  width: 25%;
+  height: 100vh;
+  /* background: #04a96d; */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Adding box shadow */
+
+}

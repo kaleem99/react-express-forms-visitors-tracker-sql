@@ -1,13 +1,22 @@
-const addARow = (name, assistedBy, age, date, time, setResult, databaseName) => {
-  const apiUrl = process.env.REACT_APP_URL_LINK + `add-Visitors${databaseName}`;
-  const updatedData = {
-    name: name,
-    assistedBy: assistedBy,
-    age: age,
-    date: date,
-    time: time,
-  };
-  console.log(updatedData, "UPDATED DATA");
+const addARow = (objectBody, setResult, databaseName, selectedTable) => {
+  const apiUrl =
+    process.env.REACT_APP_URL_LINK +
+    `addTableRow/${databaseName}/${selectedTable}`;
+  // const updatedData = {
+  //   name: name,
+  //   assistedBy: assistedBy,
+  //   age: age,
+  //   date: date,
+  //   time: time,
+  // };
+  console.log(objectBody, 10);
+  const updatedData = {};
+  for (let key in objectBody) {
+    const name = objectBody[key].name;
+    const value = objectBody[key].value;
+    updatedData[name] = value;
+  }
+  console.log(updatedData, "UPDATED DATA", 10);
   fetch(apiUrl, {
     method: "POST",
     headers: {

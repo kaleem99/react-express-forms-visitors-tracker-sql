@@ -171,9 +171,10 @@ app.post("/login", (req, res) => {
     }
   });
 });
-app.post(`/add-${TableName}:name`, (req, res) => {
+app.post(`/addTableRow/:name/:tableName`, (req, res) => {
   // const { name, assistedBy, age, date, time } = req.body;
   const dbName = req.params.name;
+  const tableName = req.params.tableName;
   const dbPath = `databases/${dbName}.db`;
 
   const db = new sqlite3.Database(dbPath);
@@ -201,7 +202,7 @@ app.post(`/add-${TableName}:name`, (req, res) => {
 
   const values = Object.values(body); // Get values dynamically
 
-  const sql = `INSERT INTO ${TableName} (${columns}) VALUES (${placeholders})`;
+  const sql = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders})`;
 
   db.run(sql, values, (err) => {
     if (err) {
@@ -215,15 +216,16 @@ app.post(`/add-${TableName}:name`, (req, res) => {
 });
 
 // Route to fetch all visitors
-app.get(`/get-all-Visitors:name`, async (req, res) => {
-  const dbName = req.params.name;
+app.post(`/get-all-Visitors`, async (req, res) => {
+  const dbName = req.body.email;
+  const tableName = req.body.selectedTable;
   console.log(dbName, 220);
   const dbPath = `databases/${dbName}.db`;
   console.log(dbPath, 222, "PATH");
   const db = new sqlite3.Database(dbPath);
-  db.all(`SELECT * FROM ${TableName};`, (err, rows) => {
+  db.all(`SELECT * FROM ${tableName};`, (err, rows) => {
     if (err) {
-      console.error("Error fetching visitors:", err.message, 100);
+      console.error(`Error fetching $tableName}`, err.message, 100);
       return res.status(500).send("Error fetching visitors.");
     } else {
       // console.log(rows);
@@ -231,13 +233,15 @@ app.get(`/get-all-Visitors:name`, async (req, res) => {
       res.json(rows);
     }
   });
+  // res.json({ message: "Done Working" });
 });
-app.get(`/get-columns-${TableName}:name`, (req, res) => {
-  const dbName = req.params.name;
-  const dbPath = `databases/${dbName}.db`;
+app.post(`/checkTableColumns`, (req, res) => {
+  const { tableName, email } = req.body;
+  const dbName = `${email}.db`;
+  const dbPath = `databases/${dbName}`;
   const db = new sqlite3.Database(dbPath);
 
-  db.all(`PRAGMA table_info(${TableName})`, (err, tableInfo) => {
+  db.all(`PRAGMA table_info(${tableName})`, (err, tableInfo) => {
     if (err) {
       console.log("Error fetching table info:", err.message);
     } else {
@@ -268,14 +272,18 @@ app.get(`/get-single-${TableName}:num/:name`, (req, res) => {
   });
 });
 
-app.delete(`/delete-all-${TableName}:name`, (req, res) => {
+app.delete(`/deleteTable/:table/:name`, (req, res) => {
   const dbName = req.params.name;
+  const tableName = req.params.table;
   const dbPath = `databases/${dbName}.db`;
   const db = new sqlite3.Database(dbPath);
-  db.run(`DELETE FROM ${TableName};`, (err, rows) => {
+  console.log("delete", tableName);
+  db.run(`DROP TABLE ${tableName};`, (err, rows) => {
     if (err) {
-      res.status(500).send("Error could not delete all visitors.");
+      console.log(err);
+      res.status(500).send("Error could not delete " + tableName);
     } else {
+      console.log(rows);
       res.json("All visitors deleted successfully");
     }
   });
@@ -360,7 +368,11 @@ app.post("/get-all-tables", (req, res) => {
   const dbPath = `databases/${dbName}`;
   const db = new sqlite3.Database(dbPath);
   console.log(db, email);
-  db.all("SELECT name FROM sqlite_master WHERE type='table'", (err, rows) => {
+  const query = `
+  SELECT name FROM sqlite_master 
+  WHERE type='table' AND name NOT LIKE 'sqlite_%';
+`;
+  db.all(query, (err, rows) => {
     if (err) {
       console.error(err.message);
       res.status(500).json({ error: "Internal server error" });
@@ -371,6 +383,28 @@ app.post("/get-all-tables", (req, res) => {
     const tableNames = rows.map((row) => row.name);
     console.log(tableNames);
     res.json({ tables: tableNames });
+  });
+});
+app.post("/createTable", (req, res) => {
+  const { tableName, columns, email } = req.body;
+  const dbName = `${email}.db`;
+  const dbPath = `databases/${dbName}`;
+  const db = new sqlite3.Database(dbPath);
+  console.log(tableName, columns, email);
+  // Construct SQL query to create the table dynamically
+  const columnsWithId = ["id INTEGER PRIMARY KEY AUTOINCREMENT", ...columns];
+
+  const createTableQuery = `CREATE TABLE IF NOT EXISTS ${tableName} (${columnsWithId.join(
+    ", "
+  )})`;
+
+  db.run(createTableQuery, (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Failed to create table" });
+    }
+
+    res.status(200).json({ message: "Table created successfully" });
   });
 });
 

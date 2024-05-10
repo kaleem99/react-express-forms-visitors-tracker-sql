@@ -4,10 +4,11 @@ const FetchDataAction = (data) => {
     data: data,
   };
 };
-const FetchColumnsAction = (data) => {
+const FetchColumnsAction = (data, tableName) => {
   return {
     type: "FETCH_COLUMNS",
     data: data,
+    tableName,
   };
 };
 export { FetchDataAction, FetchColumnsAction };
