@@ -10,7 +10,12 @@ import updateARow from "../Helpers/UpdateARow";
 import checkDataType from "../Helpers/CheckDataType";
 import setTimeOutFunction from "../Helpers/SetTimeOut";
 
-const GenerateTable = ({ data, fetchVisitorsData, databaseName }) => {
+const GenerateTable = ({
+  data,
+  fetchTableData,
+  databaseName,
+  selectedTable,
+}) => {
   const [columNames, setColumNames] = useState([]);
   // console.log(data)
   const [tableState, setTableState] = useState([]);
@@ -19,9 +24,12 @@ const GenerateTable = ({ data, fetchVisitorsData, databaseName }) => {
     const updatedData = [...data].map((obj, i) => {
       obj.delete = (
         <button
+          className="iconButtons"
           onClick={async () => {
-            await deleteARow(obj.id, databaseName);
-            // setTimeOutFunction(fetchVisitorsData);
+            await deleteARow(obj.id, databaseName, selectedTable);
+            console.log(data, 25);
+            setTimeOutFunction(fetchTableData);
+            setTableState(data);
           }}
         >
           <MdDelete />
@@ -29,6 +37,7 @@ const GenerateTable = ({ data, fetchVisitorsData, databaseName }) => {
       );
       obj.edit = (
         <button
+          className="iconButtons"
           id={i}
           onClick={(e) => {
             let x = document.querySelectorAll(
@@ -48,6 +57,7 @@ const GenerateTable = ({ data, fetchVisitorsData, databaseName }) => {
       obj.save = (
         <button
           id={i}
+          className="iconButtons"
           onClick={async (e) => {
             // const result = window.confirm("Are you sure you want to save");
             // if (result) {
@@ -74,9 +84,10 @@ const GenerateTable = ({ data, fetchVisitorsData, databaseName }) => {
     const tableColumns = Object.keys(updatedData[0]);
     // console.log(tableColumns);
     setColumNames(tableColumns);
-    console.log(data);
+    console.log(data, 87);
     setTableState(data);
   }, [data]);
+  console.log(data, 90);
   return (
     <table>
       <tr>
@@ -131,10 +142,11 @@ const GenerateTable = ({ data, fetchVisitorsData, databaseName }) => {
   );
 };
 const mapStateToProps = (state) => {
-  console.log(state.data, "!!@@@!!");
+  console.log(state, "!!@@@!!");
   return {
     data: state.data,
     databaseName: state.databaseName,
+    selectedTable: state.selectedTable,
   };
 };
 export default connect(mapStateToProps, {})(GenerateTable);

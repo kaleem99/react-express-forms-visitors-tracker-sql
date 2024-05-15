@@ -14,9 +14,15 @@ const secretKey = crypto.randomBytes(32).toString("hex");
 console.log(secretKey, "SS");
 app.use(express.json()); // For Express 4.16 and above
 // app.use(cors()); // Enable CORS for all routes
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:3002",
+];
+
 app.use(
   cors({
-    origin: "http://localhost:3001",
+    origin: allowedOrigins,
   })
 );
 app.use(express.urlencoded({ extended: true }));
@@ -288,13 +294,14 @@ app.delete(`/deleteTable/:table/:name`, (req, res) => {
     }
   });
 });
-app.delete(`/delete-${TableName}:num/:name`, (req, res) => {
+app.delete(`/delete-single-row:num/:name/:selectedTable`, (req, res) => {
   const index = req.params.num;
   // console.log("DELETE");
   const dbName = req.params.name;
+  const tableName = req.params.selectedTable;
   const dbPath = `databases/${dbName}.db`;
   const db = new sqlite3.Database(dbPath);
-  db.run(`DELETE FROM ${TableName} WHERE id = ${index};`, (err, rows) => {
+  db.run(`DELETE FROM ${tableName} WHERE id = ${index};`, (err, rows) => {
     if (err) {
       res.status(500).send("Error could not delete visitors " + index);
     } else {

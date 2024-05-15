@@ -33,6 +33,14 @@ const Reducer = (state = defaultState, action) => {
         action.setState(true);
       }
       return { ...state };
+    case "USERLOGOUT":
+      localStorage.removeItem("Token");
+      // console.log(loginData);
+      // if (loginData) {
+      // action.setState(false);
+      // }
+      window.location.reload();
+      return { ...state };
     case "USER_EXISTS":
       // console.log("1000".repeat(10));
       state.ErrorMessage = action.payload;

@@ -21,8 +21,9 @@ const Sidebar = ({ section }) => {
         {NavItems.map((data) => (
           <li
             className={section === data ? "active" : ""}
-            onClick={() =>
-              dispatch({ type: "CHANGE_DASHBOARD", payload: data })
+            onClick={
+              () => dispatch({ type: "CHANGE_DASHBOARD", payload: data })
+              // console.log(data, 21)
             }
           >
             {data}
@@ -30,6 +31,7 @@ const Sidebar = ({ section }) => {
         ))}
       </ul>
       <button
+        onClick={() => dispatch({ type: "USERLOGOUT" })}
         style={{
           position: "absolute",
           bottom: "10px",

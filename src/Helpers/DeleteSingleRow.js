@@ -1,7 +1,14 @@
-const deleteARow = (num, name) => {
+const deleteARow = (num, name, selectedTable) => {
   const urlRoute =
-    process.env.REACT_APP_URL_LINK + "delete-Visitors" + num + "/" + name;
+    process.env.REACT_APP_URL_LINK +
+    "delete-single-row" +
+    num +
+    "/" +
+    name +
+    "/" +
+    selectedTable;
   // console.log(urlRoute);
+  console.log(urlRoute, 5, selectedTable);
   fetch(urlRoute, {
     method: "DELETE",
     headers: {

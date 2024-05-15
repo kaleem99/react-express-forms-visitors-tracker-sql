@@ -12,6 +12,7 @@ const fetchData = (dispatch, url, data) => {
   })
     .then((res) => res.json())
     .then((responseData) => {
+      console.log(responseData, "dhdhdhdhd", 15);
       dispatch(FetchDataAction(responseData));
       console.log("DATA UPDATED", responseData);
     })

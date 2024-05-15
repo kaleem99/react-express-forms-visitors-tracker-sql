@@ -14,8 +14,8 @@ th {
   background-color: #069861;
   color: white;
 }
-tr:nth-child(even) {
-  background-color: #dddddd;
+tr {
+  /* background-color: #dddddd; */
 }
 .TableDiv {
   width: 90%;
@@ -107,8 +107,10 @@ button {
   /* padding: 8px; */
 }
 #GenerateTableInput {
-  height: 25px;
+  height: 40px;
   border: none;
+  padding: 0px;
+  margin: 0px;
 }
 
 /* formStyles.css */

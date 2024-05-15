@@ -91,6 +91,7 @@ function TableComponent({ data, fetchVisitorsData, tables, email }) {
       // Handle error (e.g., show error message to user)
     }
   };
+  console.log(tables, 100);
   return (
     <div className="TableDiv">
       {/* {addNewData ? (
@@ -126,11 +127,10 @@ function TableComponent({ data, fetchVisitorsData, tables, email }) {
         </button>
       </div> */}
       <div className="InnerTableComponent">
-        {" "}
-        {tables && tables.length === 0 ? (
-          <h1>No Tables add</h1>
-        ) : (
+        {tables && tables.length !== 0 ? (
           <ViewTableComponents />
+        ) : (
+          <h1>No Tables add</h1>
         )}
       </div>
     </div>

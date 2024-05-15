@@ -1,6 +1,6 @@
 const setTimeOutFunction = (functionName) => {
   setTimeout(async () => {
-    await functionName;
+    await functionName();
   }, 500);
 };
 
