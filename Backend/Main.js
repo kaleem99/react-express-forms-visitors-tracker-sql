@@ -309,9 +309,11 @@ app.delete(`/delete-single-row:num/:name/:selectedTable`, (req, res) => {
     }
   });
 });
-app.put(`/update-${TableName}:num/:name`, (req, res) => {
+app.put(`/update-single-row:num/:name/:selectedTable`, (req, res) => {
   const index = req.params.num;
   const updatedData = req.body;
+  const tableName = req.params.selectedTable;
+
   // console.log(req.body, "DDDDD");
   // console.log(updatedData.data, 166, index);
   const columnNames = updatedData.slice(1).map((col) => Object.keys(col)[0]);
@@ -357,7 +359,7 @@ app.put(`/update-${TableName}:num/:name`, (req, res) => {
   console.log(updateValues, "UPDATE VALUES");
   valueNames.push(index);
   db.run(
-    `UPDATE ${TableName} SET ${updateValues} WHERE id = ?`,
+    `UPDATE ${tableName} SET ${updateValues} WHERE id = ?`,
     valueNames,
     (err, rows) => {
       if (err) {

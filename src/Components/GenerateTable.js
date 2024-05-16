@@ -15,6 +15,7 @@ const GenerateTable = ({
   fetchTableData,
   databaseName,
   selectedTable,
+  appOverlay,
 }) => {
   const [columNames, setColumNames] = useState([]);
   // console.log(data)
@@ -26,10 +27,20 @@ const GenerateTable = ({
         <button
           className="iconButtons"
           onClick={async () => {
-            await deleteARow(obj.id, databaseName, selectedTable);
-            console.log(data, 25);
-            setTimeOutFunction(fetchTableData);
-            setTableState(data);
+            const confirm = window.confirm(
+              "Are your sure would like to delete user " + obj.id
+            );
+            if (confirm) {
+              await deleteARow(obj.id, databaseName, selectedTable);
+              console.log(data, 25);
+              setTimeOutFunction(fetchTableData);
+              setTableState(data);
+            } else {
+              dispatch({
+                type: "APP_OVERLAY",
+                payload: !appOverlay,
+              });
+            }
           }}
         >
           <MdDelete />
@@ -40,15 +51,22 @@ const GenerateTable = ({
           className="iconButtons"
           id={i}
           onClick={(e) => {
+            // alert(100)
+            dispatch({
+              type: "APP_OVERLAY",
+              payload: !appOverlay,
+            });
             let x = document.querySelectorAll(
               ".editInput" + e.currentTarget.id
             );
+
             x.forEach((elem, i) => {
               if (i > 0) {
                 elem.disabled = !elem.disabled;
               }
             });
-            console.log(x);
+
+            console.log(appOverlay, "APP");
           }}
         >
           <FaRegEdit />
@@ -69,7 +87,7 @@ const GenerateTable = ({
 
             x.forEach((elem) => resultArr.push({ [elem.name]: elem.value }));
             x.forEach((elem) => (elem.disabled = true));
-            await updateARow(obj.id, databaseName, resultArr);
+            await updateARow(obj.id, databaseName, resultArr, selectedTable);
             // setTimeOutFunction(fetchVisitorsData);
             // }
           }}
@@ -84,69 +102,82 @@ const GenerateTable = ({
     const tableColumns = Object.keys(updatedData[0]);
     // console.log(tableColumns);
     setColumNames(tableColumns);
-    console.log(data, 87);
+    // console.log(data, 87);
     setTableState(data);
   }, [data]);
-  console.log(data, 90);
+  // console.log(data, 90);
   return (
-    <table>
-      <tr>
-        {columNames.map((key, i) => (
-          <th key={"A" + i}>{key}</th>
-        ))}
-      </tr>
-      {tableState.map((obj, index) => {
-        const arr = Object.values(obj);
-        // console.log(arr);
-        const keys = Object.keys(obj);
-        return (
-          <tr key={"B" + index}>
-            {/* <td>{obj.name}</td> */}
-            {arr.map((val, i) => (
-              <td key={"C" + i}>
-                {i >= arr.length - 3 ? (
-                  val
-                ) : (
-                  <input
-                    key={"D" + i}
-                    id="GenerateTableInput"
-                    className={`editInput${index}`}
-                    disabled
-                    name={keys[i]}
-                    // defaultValue={val}
-                    value={val}
-                    type={checkDataType(keys[i])}
-                    onChange={(e) =>
-                      setTableState((prevState) => {
-                        const newState = prevState.map((state, idx) => {
-                          if (idx === index) {
-                            return {
-                              ...state,
-                              [keys[i]]: e.target.value,
-                            };
-                          }
-                          return state;
-                        });
-                        dispatch({ type: "UPDATE_DATA", data: newState });
-                        return newState;
-                      })
-                    }
-                  />
-                )}
-              </td>
-            ))}
-          </tr>
-        );
-      })}
-    </table>
+    <div>
+      <h1>Table Name: {selectedTable}</h1>
+      <table>
+        <tr>
+          {columNames.map((key, i) => (
+            <th key={"A" + i}>{key.toUpperCase()}</th>
+          ))}
+        </tr>
+        {tableState.map((obj, index) => {
+          const arr = Object.values(obj);
+          // console.log(arr);
+          const keys = Object.keys(obj);
+          return (
+            <tr id={appOverlay ? "GenerateTDID" : ""} key={"B" + index}>
+              {/* <td>{obj.name}</td> */}
+              {arr.map((val, i) => (
+                <td key={"C" + i}>
+                  {i >= arr.length - 3 ? (
+                    val
+                  ) : (
+                    <input
+                      key={"D" + i}
+                      id="GenerateTableInput"
+                      className={`editInput${index}`}
+                      disabled
+                      name={keys[i]}
+                      // defaultValue={val}
+                      value={val}
+                      // onFocus={(e) => {
+                      //   e.target.parentElement.parentElement.id =
+                      //     "GenerateTDID";
+                      //   document.getElementById("AppOverlay").style.display =
+                      //     "block";
+                      // }}
+                      // onBlur={(e) =>
+                      //   (e.target.parentElement.parentElement.id = "")
+                      // }
+                      type={checkDataType(keys[i])}
+                      onChange={(e) =>
+                        setTableState((prevState) => {
+                          const newState = prevState.map((state, idx) => {
+                            if (idx === index) {
+                              return {
+                                ...state,
+                                [keys[i]]: e.target.value,
+                              };
+                            }
+                            return state;
+                          });
+                          dispatch({ type: "UPDATE_DATA", data: newState });
+                          return newState;
+                        })
+                      }
+                    />
+                  )}
+                </td>
+              ))}
+            </tr>
+          );
+        })}
+      </table>
+    </div>
   );
 };
 const mapStateToProps = (state) => {
-  console.log(state, "!!@@@!!");
+  // console.log(state, "!!@@@!!");
   return {
     data: state.data,
     databaseName: state.databaseName,
     selectedTable: state.selectedTable,
+    appOverlay: state.appOverlay,
   };
 };
 export default connect(mapStateToProps, {})(GenerateTable);

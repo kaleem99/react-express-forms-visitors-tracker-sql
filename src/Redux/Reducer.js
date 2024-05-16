@@ -4,6 +4,7 @@ const defaultState = {
   section: "Create Table",
   columns: [],
   data: [],
+  appOverlay: false,
 };
 const Reducer = (state = defaultState, action) => {
   const databaseName = localStorage.getItem("Database");
@@ -61,6 +62,8 @@ const Reducer = (state = defaultState, action) => {
     case "CHANGE_DASHBOARD":
       state.section = action.payload;
       return { ...state };
+    case "APP_OVERLAY":
+      return { ...state, appOverlay: action.payload };
     default:
       return state;
   }

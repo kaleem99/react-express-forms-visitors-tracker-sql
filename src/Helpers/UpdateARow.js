@@ -1,6 +1,8 @@
-const updateARow = (num, name, data) => {
+const updateARow = (num, name, data, selectedTable) => {
   const TableName = "Visitors";
-  const apiUrl = process.env.REACT_APP_URL_LINK + `update-${TableName}${num}/${name}`;
+  const apiUrl =
+    process.env.REACT_APP_URL_LINK +
+    `update-single-row${num}/${name}/${selectedTable}`;
   const updatedData = { ...data }; // Assuming data is an object with column names as keys
 
   const columnNames = Object.keys(updatedData);
@@ -10,7 +12,7 @@ const updateARow = (num, name, data) => {
 
   const queryParams = [...Object.values(updatedData)];
   console.log(data, "DARA");
-  console.log(data, 111)
+  console.log(data, 111);
   fetch(apiUrl, {
     method: "PUT",
     headers: {

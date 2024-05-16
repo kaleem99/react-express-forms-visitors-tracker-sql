@@ -112,7 +112,30 @@ button {
   padding: 0px;
   margin: 0px;
 }
-
+#GenerateTDID {
+  position: absolute;
+  height: 50%;
+  display: grid;
+  width: 60%;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  background: white;
+  z-index: 999;
+}
+#GenerateTDID > td {
+  background-color: white;
+}
+#AppOverlay {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  /* display: none; */
+  background-color: gray;
+  z-index: 999;
+}
 /* formStyles.css */
 
 .form-container {

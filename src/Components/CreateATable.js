@@ -9,7 +9,11 @@ const CreateTable = ({ email }) => {
   const handleColumnInputChange = (e) => {
     const value = parseInt(e.target.value, 10);
     setNumColumns(value);
-    setTableData(Array(value).fill("")); // Update table data based on new column count
+    console.log(Array(value).fill(tableData), tableData);
+    const newArr = [...tableData];
+    newArr.push("");
+    console.log(newArr, 15);
+    setTableData(newArr); // Update table data based on new column count
   };
 
   const handleDataInputChange = (e, index) => {
@@ -24,6 +28,11 @@ const CreateTable = ({ email }) => {
     console.log(tableData); // You can perform table creation logic here
   };
   const handleCreateTable = async () => {
+    console.log(tableData, tableName);
+    const filterColumns = tableData.filter((col) => col === "");
+    if (filterColumns.length !== 0 || tableName === "") {
+      return alert("Please ensure all required input fields and filled in.");
+    }
     try {
       const response = await fetch(
         process.env.REACT_APP_URL_LINK + "createTable",
@@ -72,6 +81,7 @@ const CreateTable = ({ email }) => {
           />
 
           {/* Generate input fields based on numColumns */}
+          <label htmlFor="numColumns">Column Names:</label>
 
           {tableData.map((data, index) => (
             <input

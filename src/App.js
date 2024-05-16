@@ -10,7 +10,7 @@ import LoginForm from "./Components/LoginForm";
 import fetchAllTables from "./Helpers/FetchAllTables";
 import Sections from "./Components/Sections";
 import Sidebar from "./Components/NavBar";
-function App({ databaseName, section }) {
+function App({ databaseName, section, appOverlay }) {
   const [state, setState] = useState(false);
   const [nav, setNav] = useState(true);
   const dispatch = useDispatch();
@@ -98,6 +98,15 @@ function App({ databaseName, section }) {
   return (
     <div className="App">
       {/* {databaseName == undefined ? ( */}
+      {appOverlay && (
+        <div id="AppOverlay">
+          <button
+            onClick={() => dispatch({ type: "APP_OVERLAY", payload: !appOverlay })}
+          >
+            CLick
+          </button>
+        </div>
+      )}
       {checkSection()}
       {/* // ) : (
       //   <TableComponent fetchVisitorsData={fetchVisitorsData} />
@@ -110,6 +119,7 @@ const mapStateToProps = (state) => {
   return {
     databaseName: state.databaseName,
     section: state.SECTION,
+    appOverlay: state.appOverlay,
   };
 };
 export default connect(mapStateToProps, {})(App);
